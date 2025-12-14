@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
-type Student = Prisma.StudentGetPayload<{}>;
+type Student = Prisma.StudentGetPayload<Prisma.StudentDefaultArgs>;
 
 type ApiResponse<T> = {
   code: number;
