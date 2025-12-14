@@ -1,0 +1,19 @@
+services:
+  web:
+    # image: registry.cn-hangzhou.aliyuncs.com/hanfangyuan/nextjs-template-web:main
+    image: nextjs-template:test
+    # pull_policy: always
+    ports:
+      - "3001:3000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      # 启动时自动执行 prisma migrate deploy（默认开启）
+      - PRISMA_MIGRATE_ON_START=true
+      # Prisma sqlite 数据库文件放在可持久化卷里，避免容器重建丢数据
+      - DATABASE_URL=file:/data/app.db
+    volumes:
+      - ./volumes/app.db:/data/app.db
+    restart: unless-stopped

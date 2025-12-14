@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "home": "Home",
+    "studentsManagement": "Students Management",
+    "siteName": "fastapi-nextjs-template",
+    "logout": "Logout"
+  },
+  "footer": {
+    "copyright": "© {year} fastapi-nextjs-template",
+    "poweredBy": "Powered by Next.js · FastAPI · shadcn/ui"
+  },
+  "common": {
+    "loading": "Loading...",
+    "noData": "No data",
+    "refresh": "Refresh",
+    "toast": {
+      "createSuccess": "Created successfully",
+      "createFail": "Create failed",
+      "updateSuccess": "Updated successfully",
+      "updateFail": "Update failed",
+      "deleteSuccess": "Deleted successfully",
+      "deleteFail": "Delete failed"
+    }
+  }
+}

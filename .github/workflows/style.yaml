@@ -1,0 +1,71 @@
+name: Style Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-changes:
+    name: Determine changed scopes
+    runs-on: ubuntu-latest
+    outputs:
+      web-changed: ${{ steps.changes.outputs.web }}
+      workflow-changed: ${{ steps.changes.outputs.workflow }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          base: main
+          filters: |
+            web:
+              - '!**/.github/workflows/**'
+              - '!docs/**'
+              - '!README*'
+              - '!.gitignore'
+              - '!.claude/**'
+              - '!LICENSE*'
+              - '**'
+            workflow:
+              - '.github/workflows/style.yaml'
+
+  web-eslint:
+    name: Web ESLint
+    runs-on: ubuntu-latest
+    needs: check-changes
+    if: needs.check-changes.outputs.web-changed == 'true' || needs.check-changes.outputs.workflow-changed == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies (npm)
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint -- .
+
+      - name: Lint hints
+        if: failure()
+        run: |
+          echo '请在 web 目录运行: npm run lint -- --fix . 来自动修复可修复的问题。'
+          echo '若仍有未修复的问题，请根据 ESLint 输出逐项手动修复剩余问题。'

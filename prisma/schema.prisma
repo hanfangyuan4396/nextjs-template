@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  male
+  female
+}
+
+model Student {
+  id         Int     @id @default(autoincrement())
+  name       String
+  gender     Gender
+  age        Int?
+  student_id String  @unique
+}
+
