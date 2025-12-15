@@ -43,4 +43,5 @@ next-env.d.ts
 
 # db
 dev.db
-
+test.db
+e2e.db
