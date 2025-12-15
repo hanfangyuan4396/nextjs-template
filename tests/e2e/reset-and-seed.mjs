@@ -1,9 +1,12 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 // E2E 数据库路径固定（与 playwright.config.ts 保持一致）
-const dbFile = path.resolve("e2e.db");
+// 不依赖当前 cwd，始终固定到仓库根目录的 ./e2e.db
+const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const dbFile = path.join(ROOT_DIR, "prisma/e2e.db");
 const dbUrl = `file:${dbFile}`;
 process.env.DATABASE_URL = dbUrl;
 
