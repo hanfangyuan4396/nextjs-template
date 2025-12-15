@@ -17,6 +17,7 @@ export default defineConfig({
           name: "node",
           environment: "node",
           include: ["tests/unit/**/*.test.{ts,tsx}", "tests/integration/**/*.test.{ts,tsx}"],
+          globalSetup: ["./tests/setup/node.global.ts"],
           setupFiles: ["./tests/setup/node.setup.ts"],
           restoreMocks: true,
           mockReset: true,
