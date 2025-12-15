@@ -68,5 +68,51 @@ jobs:
       - name: Prisma generate
         run: npx prisma generate
 
-      - name: Run Vitest
-        run: npm test
+      - name: Run Vitest (with coverage)
+        run: npm run test:coverage -- --coverage.reporter=text --coverage.reporter=json-summary
+
+      - name: Publish coverage to job summary
+        if: always()
+        run: |
+          node - <<'NODE'
+          const fs = require("node:fs");
+          const path = require("node:path");
+          
+          const summaryPath = path.join(process.cwd(), "coverage", "coverage-summary.json");
+          const out = process.env.GITHUB_STEP_SUMMARY;
+          
+          if (!out) {
+            console.log("GITHUB_STEP_SUMMARY is not set, skip.");
+            process.exit(0);
+          }
+          
+          if (!fs.existsSync(summaryPath)) {
+            fs.appendFileSync(out, `## 测试覆盖率（Vitest）\n\n未找到 coverage 汇总文件：\`${summaryPath}\`\n`);
+            process.exit(0);
+          }
+          
+          const json = JSON.parse(fs.readFileSync(summaryPath, "utf-8"));
+          const total = json.total || {};
+          const rows = [
+            ["Statements", total.statements],
+            ["Branches", total.branches],
+            ["Functions", total.functions],
+            ["Lines", total.lines],
+          ].map(([name, v]) => {
+            const pct = v?.pct ?? 0;
+            const covered = v?.covered ?? 0;
+            const totalN = v?.total ?? 0;
+            return `| ${name} | ${pct}% | ${covered}/${totalN} |`;
+          });
+          
+          const md = [
+            "## 测试覆盖率（Vitest）",
+            "",
+            "| Metric | % | Covered/Total |",
+            "| --- | ---: | ---: |",
+            ...rows,
+            "",
+          ].join("\n");
+          
+          fs.appendFileSync(out, md);
+          NODE
