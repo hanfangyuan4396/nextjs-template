@@ -1,0 +1,86 @@
+name: e2e
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: e2e-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-changes:
+    name: Determine changed scopes
+    runs-on: ubuntu-latest
+    outputs:
+      web-changed: ${{ steps.changes.outputs.web }}
+      e2e-changed: ${{ steps.changes.outputs.e2e }}
+      workflow-changed: ${{ steps.changes.outputs.workflow }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          base: main
+          filters: |
+            web:
+              - '!**/.github/workflows/**'
+              - '!docs/**'
+              - '!README*'
+              - '!.gitignore'
+              - '!.claude/**'
+              - '!LICENSE*'
+              - '**'
+            e2e:
+              - 'tests/e2e/**'
+              - 'playwright.config.*'
+            workflow:
+              - '.github/workflows/e2e.yml'
+
+  test:
+    runs-on: ubuntu-latest
+    needs: check-changes
+    if: needs.check-changes.outputs.web-changed == 'true' || needs.check-changes.outputs.e2e-changed == 'true' || needs.check-changes.outputs.workflow-changed == 'true'
+    timeout-minutes: 30
+    env:
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
+
+
