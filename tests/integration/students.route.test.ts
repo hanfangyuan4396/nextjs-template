@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+
+type Student = Prisma.StudentGetPayload<Prisma.StudentDefaultArgs>;
 
 describe("API /students (integration)", () => {
   beforeEach(async () => {
@@ -21,7 +24,10 @@ describe("API /students (integration)", () => {
     const res = await GET(new Request("http://localhost/api/students?page=1&page_size=2"));
 
     expect(res.status).toBe(200);
-    const json = (await res.json()) as { code: number; data: { page: number; page_size: number; total: number; items: unknown[] } };
+    const json = (await res.json()) as {
+      code: number;
+      data: { page: number; page_size: number; total: number; items: Student[] };
+    };
     expect(json.code).toBe(0);
     expect(json.data.page).toBe(1);
     expect(json.data.page_size).toBe(2);
