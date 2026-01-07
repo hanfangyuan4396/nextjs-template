@@ -1,8 +1,9 @@
 services:
   web:
-    # image: registry.cn-hangzhou.aliyuncs.com/hanfangyuan/nextjs-template-web:main
-    image: nextjs-template:test
-    # pull_policy: always
+    image: registry.cn-hangzhou.aliyuncs.com/hanfangyuan/nextjs-template-web:main
+    pull_policy: always
+    env_file:
+      - .env
     ports:
       - "3001:3000"
     environment:
