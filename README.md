@@ -49,3 +49,6 @@ npx shadcn@latest init
 npx shadcn@latest add button input label select form table dropdown-menu pagination
 ```
 - 组件文件生成于 `src/components/ui/`。
+
+## 调整项目名称
+告诉AI"搜索当前项目的docker compose，workflows配置等文件，把nextjs-template-web改成xx"
