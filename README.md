@@ -4,6 +4,63 @@
 
 本前端项目基于 Next.js 16 (App Router) 与 TypeScript
 
+## 启动方式
+
+### 源码启动
+
+适用于本地直接使用 Node.js 和 `npm` 启动项目。
+
+#### 开发模式
+
+在项目根目录执行：
+
+```bash
+npm install
+npm run dev
+```
+
+启动后默认访问 `http://localhost:3000`。
+
+#### 生产模式
+
+在项目根目录执行：
+
+```bash
+npm install
+npm run build
+npm run start
+```
+
+如需在提交前检查前端代码质量，可额外执行：
+
+```bash
+npm run lint
+npm run test
+```
+
+### Docker Compose 启动
+
+项目提供了 `docker/docker-compose.yaml` 和 `docker/nextjs-template-service.sh`，可用于在服务器或本地以容器方式启动服务。
+
+#### 启动前准备
+
+在项目根目录执行以下命令：
+
+```bash
+cp docker/.env.example docker/.env
+mkdir -p docker/volumes
+touch docker/volumes/app.db
+cd docker
+./nextjs-template-service.sh start
+```
+
+#### 说明
+
+- `docker/.env` 由 `docker/.env.example` 复制而来，可按实际部署环境补充变量。
+- SQLite 数据库文件挂载为 `docker/volumes/app.db`，用于持久化 Prisma 数据。
+- 默认会将容器内 `3000` 端口映射到宿主机 `3001` 端口。
+- 如需停止服务，可在 `docker/` 目录执行 `./nextjs-template-service.sh stop`。
+- 如需查看日志，可在 `docker/` 目录执行 `./nextjs-template-service.sh logs`。
 
 ## GitHub Actions 变量与 Secrets 表
 
