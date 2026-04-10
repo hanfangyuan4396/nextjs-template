@@ -1,13 +1,17 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Prisma } from "@prisma/client";
 
-import { prisma } from "@/lib/prisma";
+import { useTestDatabase } from "../setup/test-db";
 
 type Student = Prisma.StudentGetPayload<Prisma.StudentDefaultArgs>;
 
 describe("API /students (integration)", () => {
+  let prisma: typeof import("@/lib/prisma").prisma;
+
   beforeEach(async () => {
-    // 保证用例之间互不影响
+    vi.resetModules();
+    useTestDatabase("students");
+    ({ prisma } = await import("@/lib/prisma"));
     await prisma.student.deleteMany();
   });
 
@@ -81,5 +85,3 @@ describe("API /students (integration)", () => {
     expect(json2.message).toContain("already exists");
   });
 });
-
-

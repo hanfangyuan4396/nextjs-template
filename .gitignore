@@ -45,6 +45,7 @@ next-env.d.ts
 dev.db
 test.db
 e2e.db
+tests/setup/.tmp/
 
 # playwright
 test-results
