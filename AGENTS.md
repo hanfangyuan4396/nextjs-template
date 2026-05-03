@@ -19,7 +19,8 @@
 使用 TypeScript，遵循现有代码风格：2 空格缩进、保留分号、使用双引号。React 组件使用 PascalCase，函数与变量使用 camelCase，路由目录与组件文件名使用 kebab-case，例如 `locale-switcher.tsx`。基础 UI 组件集中放在 `src/components/ui/`，内部模块优先使用 `@/` 别名导入。代码规范由 `eslint.config.mjs` 统一约束，基于 Next.js core-web-vitals 与 TypeScript 规则集。
 
 ## 测试规范
-测试文件命名为 `*.test.ts` 或 `*.test.tsx`，并放入对应的 `tests/` 子目录。Vitest 在 `node` 环境下运行单元测试与集成测试，在 `happy-dom` 环境下运行组件测试。Playwright 用例位于 `tests/e2e/`，依赖 `tests/e2e/reset-and-seed.mjs` 以及 Prisma 的 E2E 数据库。涉及功能变更时，提交前至少运行 `npm run test:coverage`。
+- 测试文件命名为 `*.test.ts` 或 `*.test.tsx`，并放入对应的 `tests/` 子目录。Vitest 在 `node` 环境下运行单元测试与集成测试，在 `happy-dom` 环境下运行组件测试。Playwright 用例位于 `tests/e2e/`，依赖 `tests/e2e/reset-and-seed.mjs` 以及 Prisma 的 E2E 数据库。涉及功能变更时，提交前至少运行 `npm run test:coverage`。
+- 生成测试代码时，需要为每个测试用例添加注释，说明该用例测试的功能；测试函数中的关键代码也要添加注释，说明断言、准备数据或交互步骤的目的。
 
 ## 提交与 Pull Request 规范
 近期提交遵循 Conventional Commits，例如 `feat(test): ...`、`chore(tests): ...`、`chore(ci): ...`。提交标题应简短，并尽量带上作用域。提交 Pull Request 时请附上变更摘要、已执行的测试命令、关联 Issue；如涉及界面改动，请补充截图。若变更影响 Prisma、环境变量或部署流程，需要在描述中明确说明。
