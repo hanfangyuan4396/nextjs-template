@@ -108,12 +108,8 @@ async function requestWithAutoRefresh<T>(
       // 刷新失败：清理并跳转首页
       clearAccessToken();
       if (typeof window !== "undefined") {
-        const loginUrl = "/";
-        try {
-          window.location.replace(loginUrl);
-        } catch {
-          window.location.href = loginUrl;
-        }
+        // 401 后需要整页重置客户端状态，服务层无法使用 useRouter/redirect
+        window.location.replace("/");
       }
       return { code: 40100, message: "unauthorized", data: null } as ApiResponse<T>;
     }
